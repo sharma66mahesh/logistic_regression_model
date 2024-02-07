@@ -18,6 +18,14 @@ train_set_x = train_set_x_flatten / 255
 test_set_x = test_set_x_flatten / 255
 
 regression_model = LogisticRegression(train_set_x, train_set_y, test_set_x,
-                                      test_set_y, classes, num_iterations=100, learning_rate=0.01, print_cost=False)
+                                      test_set_y, classes, num_iterations=2000, learning_rate=0.005, print_cost=True)
 
-print(regression_model.propagate())
+# Train model
+regression_model.optimize()
+
+# Test model accuracy
+Y_prediction_train = regression_model.predict(train_set_x)
+Y_prediction_test = regression_model.predict(test_set_x)
+
+print('Accuracy for train dataset: ', 100 - np.mean(np.abs(Y_prediction_train - train_set_y)) * 100, "%")
+print('Accuracy for test dataset: ', 100 - np.mean(np.abs(Y_prediction_test - test_set_y)) * 100, "%")

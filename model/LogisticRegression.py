@@ -19,6 +19,7 @@ class LogisticRegression:
         self.num_iterations = num_iterations
         self.learning_rate = learning_rate
         self.print_cost = print_cost
+        self.costs = []
 
         self.n_x = self.train_set_x.shape[0]  # no of input features
         self.m = train_dataset_x.shape[1]  # no of training data
@@ -54,3 +55,37 @@ class LogisticRegression:
         grads = {"dw": dw, "db": db}
 
         return grads, cost
+
+    def optimize(self):
+        """ Optimize w and b by running gradient descent
+        """
+        self.costs = []
+        
+        for i in range(self.num_iterations):
+            grads, cost = self.propagate()
+            
+            self.w = self.w - self.learning_rate * grads["dw"]
+            self.b = self.b - self.learning_rate * grads["db"]
+            
+            if(i % 100 == 0):
+                self.costs.append(cost)
+                if(self.print_cost):
+                    print(f'Cost after iteration {i}: {cost}')
+                    
+    def predict(self, X):
+        """Predict whether the datasets in the provided vector is cat or not
+
+        Args:
+            X (numpy.ndarray): Input Vector to determine whether it's a cat or not
+        Returns:
+            Y_prediction (numpy.ndarray): 1D Vector of 1s and 0s
+        """
+        assert(self.w.shape[0] == X.shape[0])
+        m = X.shape[1]
+        Z = np.dot(self.w.T, X) + self.b
+        A = sigmoid(Z)
+        Y_prediction = (A >= 0.5) * 1.0
+        
+        assert(Y_prediction.shape == (1, m))
+        
+        return Y_prediction
